@@ -1,0 +1,29 @@
+# Python
+**/__pycache__/
+*.py[cod]
+*.log
+.env
+venv/
+**/venv/
+
+# Streamlit/runtime
+SmartFarmBackend/.streamlit/secrets.toml
+SmartFarmBackend/streamlit.*.log
+
+# Secrets and local Firebase config
+SmartFarmBackend/*firebase-adminsdk*.json
+**/google-services.json
+*.keystore
+
+# Android/Gradle generated output
+**/.gradle/
+**/.cxx/
+**/build/
+**/local.properties
+
+# Archives and extracted duplicates
+*.zip
+SmartFarmBackend/New folder/
+
+# Editor scratch files
+SmartFarmBackend/tempCodeRunnerFile.python
