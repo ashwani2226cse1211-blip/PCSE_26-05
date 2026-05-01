@@ -16,6 +16,7 @@ SmartFarmBackend/*firebase-adminsdk*.json
 *.keystore
 
 # Android/Gradle generated output
+Android/
 **/.gradle/
 **/.cxx/
 **/build/
