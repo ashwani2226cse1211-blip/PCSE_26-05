@@ -104,26 +104,33 @@ The pipeline performs the following steps:
 
 ## 4. System Architecture
 
+| Layer | Component | Responsibility |
+| --- | --- | --- |
+| Layer 5 | Interface Layer | Streamlit dashboard, crop selection, visual reports, recommendation publishing |
+| Layer 4 | Decision Layer | Irrigation rules, drainage alerts, crop thresholds, final action generation |
+| Layer 3 | Physics Layer | Soil-water balance correction, evapotranspiration adjustment, residual tracking |
+| Layer 2 | Prediction Layer | Keras LSTM model inference, scalers, TensorFlow Lite deployment artifact |
+| Layer 1 | Data Layer | Firebase telemetry, OpenWeather forecast, 10-year historical dataset fallback |
+
 ```text
-+---------------------------------------------------------+
-|                 LAYER 5: Interface Layer                |
-|     Streamlit Dashboard, Crop Selection, Reports         |
-+---------------------------------------------------------+
-|              LAYER 4: Decision Layer                    |
-|  Irrigation Rules, Drainage Alerts, Firebase Publish     |
-+---------------------------------------------------------+
-|              LAYER 3: Physics Layer                     |
-|  Soil-Water Balance, ET Correction, Residual Tracking    |
-+---------------------------------------------------------+
-|              LAYER 2: Prediction Layer                  |
-|       Keras LSTM Model, Scalers, TFLite Artifact         |
-+---------------------------------------------------------+
-|              LAYER 1: Data Layer                        |
-| Firebase Telemetry, OpenWeather API, 10-Year Dataset     |
-+---------------------------------------------------------+
-        Input: Sensor values, crop profile, weather forecast
-        Output: 5-day irrigation recommendation and diagnostics
+Sensor Data + Weather Forecast + Crop Profile
+                  |
+                  v
+        LSTM Soil-Moisture Forecast
+                  |
+                  v
+      Physics-Guided Water Balance Layer
+                  |
+                  v
+     Crop-Specific Irrigation Decision
+                  |
+                  v
+ Streamlit Dashboard + Firebase Prediction Output
 ```
+
+Input: sensor values, crop profile, and weather forecast.
+
+Output: 5-day irrigation recommendation, diagnostics, and Firebase-ready report.
 
 Design invariant: every recommendation must be explainable through sensor values, weather conditions, model prediction, crop threshold, and physics-corrected soil-moisture behavior.
 
