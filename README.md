@@ -351,7 +351,7 @@ Suggested citation:
 ```bibtex
 @techreport{2026precision_irrigation_scheduling,
   title       = {Precision Irrigation Scheduling},
-  author      = {Baghel, Ashwani and Patel, Utkarsh and Rajput, Omendra and Singh, Vaibhav},
+  author      = {Ashwani Baghel, Utkarsh Patel, Omendra Rajput, Vaibhav Singh},
   year        = {2026},
   month       = {May},
   institution = {KIET Group of Institutions, Ghaziabad},
