@@ -1,0 +1,80 @@
+PRECISION IRRIGATION PROJECT - REFERENCES (LINKS)
+
+---
+
+1. FAO OFFICIAL REFERENCES
+
+---
+
+FAO State of Food and Agriculture (2023)
+https://www.fao.org/publications/sofa/2023/en/
+
+FAO Irrigation and Drainage Paper 56 (Crop Evapotranspiration)
+https://www.fao.org/4/x0490e/x0490e00.html
+
+Alternative PDF (FAO-56 Full Document)
+https://www.professormendoncauenf.com.br/wp-content/uploads/2021/03/ag_fao_56_ingles.pdf
+
+---
+
+2. MACHINE LEARNING + IRRIGATION PAPERS
+
+---
+
+Machine Learning for Evapotranspiration Prediction (Elsevier)
+https://www.sciencedirect.com/science/article/pii/S1574954123001620
+
+ML Models for Soil Water Content & ET Prediction (2025)
+https://www.sciencedirect.com/science/article/pii/S2666154325007057
+
+Deep Learning + Weather Forecast for ET₀
+https://arxiv.org/abs/2403.18489
+
+---
+
+3. REMOTE SENSING (SENTINEL-2) REFERENCES
+
+---
+
+Sentinel-2 Evapotranspiration Research (MDPI)
+https://www.mdpi.com/2073-4395/9/10/663
+
+Sentinel-2 Irrigation & ET Study (ResearchGate)
+https://www.researchgate.net/publication/326183280_Capability_of_Sentinel-2_data_for_estimating_maximum_evapotranspiration_and_irrigation_requirements_for_tomato_crop_in_Central_Italy
+
+Remote Sensing Irrigation Research (Mendeley)
+https://www.mendeley.com/catalogue/62b01b01-dc36-390c-ae74-03ad516323e4/
+
+---
+
+4. PRECISION AGRICULTURE + ML + SATELLITE
+
+---
+
+Precision Agriculture using Sentinel-2 + ML
+https://arxiv.org/abs/2403.09651
+
+High-Resolution Irrigation Prediction (Sentinel-2)
+https://arxiv.org/abs/2012.07658
+
+---
+
+5. HYDROLOGY + IRRIGATION THEORY
+
+---
+
+SEBAL Model (Evapotranspiration using satellite data)
+https://en.wikipedia.org/wiki/SEBAL
+
+---
+
+6. SUPPORTING REFERENCES (GENERAL)
+
+---
+
+FAO-56 + Remote Sensing Combined Research
+https://www.semanticscholar.org/paper/66dfb85329213a6946ae39913344c1b3d0ff53ef
+
+---
+
+## END OF FILE

@@ -1,0 +1,507 @@
+SMART FARM IRRIGATION ADVISOR - INSTRUCTIONS TO RUN AND EXPLAIN
+================================================================
+
+Project ID: PCSE26-05
+
+
+1. PROJECT OVERVIEW
+-------------------
+
+Smart Farm Irrigation Advisor is a final year project built for smart irrigation decision support. The system helps determine:
+
+- Whether irrigation is required today.
+- On which day irrigation may be required in the next 5 days.
+- Whether soil moisture is within the safe range.
+- Whether excess moisture may create a drainage risk.
+
+The project combines soil sensor data, weather forecast data, a trained AI model, crop-specific rules, and a physics-based water-balance correction layer.
+
+
+2. COMPLETE SYSTEM FLOW
+-----------------------
+
+Expected system flow:
+
+Soil Moisture Sensor
+Temperature and Humidity Sensor
+        |
+        v
+Microcontroller such as ESP32, NodeMCU, or Arduino with Wi-Fi module
+        |
+        v
+Firebase Realtime Database
+        |
+        v
+Python Backend and AI Model
+        |
+        v
+Streamlit Dashboard and Firebase Prediction Output
+
+The backend reads live field data from Firebase. If Firebase is unavailable, the system uses the bundled dataset as a fallback so that the project can still be demonstrated reliably.
+
+
+3. HARDWARE EXPLANATION
+-----------------------
+
+The hardware layer is responsible for collecting real field conditions.
+
+Expected components:
+
+1. Soil Moisture Sensor
+   - Measures the current soil moisture percentage.
+   - The backend expects this value in Firebase under the key "soilPercent".
+
+2. Temperature and Humidity Sensor
+   - A DHT11, DHT22, or similar sensor can be used.
+   - Temperature and humidity help the system understand field conditions and water demand.
+
+3. ESP32, NodeMCU, or Arduino
+   - Reads sensor values.
+   - Sends data to Firebase Realtime Database through Wi-Fi.
+
+4. Internet Connection
+   - Required for Firebase and OpenWeather API access.
+
+5. Optional Relay and Water Pump
+   - Can be added later for automatic irrigation control.
+   - The current implementation provides recommendations; pump automation is part of future scope.
+
+
+4. FIREBASE DATA FORMAT
+-----------------------
+
+The backend reads live sensor values from the "sensorData" node in Firebase Realtime Database.
+
+Expected Firebase structure:
+
+sensorData
+|
++-- soilPercent: 52.5
++-- temperature: 28.0
++-- humidity: 63.0
+
+Equivalent JSON format:
+
+{
+  "sensorData": {
+    "soilPercent": 52.5,
+    "temperature": 28.0,
+    "humidity": 63.0
+  }
+}
+
+The final recommendation is saved under the "prediction_output" node.
+
+The prediction output contains:
+
+- Final recommendation report
+- 5-day forecast rows
+- Crop profile
+- Current weather
+- Summary metrics
+- Last updated timestamp
+
+
+5. SOFTWARE EXPLANATION
+-----------------------
+
+Main software folder:
+
+SmartFarmBackend/
+
+Important files:
+
+1. app.py
+   - Main Streamlit dashboard file.
+   - Runs the user interface.
+   - Allows crop selection, recommendation viewing, chart viewing, diagnostics, and Firebase publishing.
+
+2. smartfarm_core.py
+   - Core logic of the project.
+   - Loads the trained model and dataset.
+   - Processes weather forecast data.
+   - Defines crop profiles.
+   - Runs LSTM prediction and physics-guided correction.
+   - Calculates model evaluation metrics.
+
+3. decision_engine.py
+   - Console-based reporting engine.
+   - Prints the full irrigation report in the terminal.
+   - Attempts to save the generated recommendation to Firebase.
+
+4. dataset.py
+   - Generates a logical 10-year agricultural dataset.
+
+5. converter.py
+   - Converts final_smart_model.h5 into final_smart_model.tflite.
+   - The TensorFlow Lite file is useful for future mobile or edge deployment.
+
+6. final_smart_model.h5
+   - Trained Keras LSTM model used by the backend.
+
+7. final_smart_model.tflite
+   - TensorFlow Lite model artifact for future deployment.
+
+8. ultra_realistic_dataset_10_years.csv
+   - Main runtime dataset.
+   - Contains daily weather and soil-moisture records from 2015 to 2024.
+
+
+6. TECHNOLOGIES USED
+--------------------
+
+Programming:
+- Python
+
+Dashboard:
+- Streamlit
+
+Machine Learning:
+- TensorFlow
+- Keras LSTM
+- Scikit-learn
+
+Data Processing:
+- Pandas
+- NumPy
+
+Cloud:
+- Firebase Realtime Database
+- Firebase Admin SDK
+
+Weather:
+- OpenWeather API
+
+Model Formats:
+- Keras .h5 model
+- TensorFlow Lite .tflite model
+
+
+7. AI MODEL ROLE
+----------------
+
+The AI model predicts upcoming soil moisture.
+
+Model input features:
+
+- tempmax
+- tempmin
+- temp
+- humidity
+- windspeed
+- solarradiation
+- Evapoatranspiration
+- precip
+- precipprob
+- precipcover
+- soil_moisture
+
+Model output:
+
+- Predicted soil moisture percentage
+
+The model gives a raw soil-moisture prediction. Since raw AI predictions can sometimes conflict with real field physics, the project also applies a physics-guided correction layer.
+
+
+8. PHYSICS-GUIDED CORRECTION
+----------------------------
+
+The project uses a simple soil-water balance equation:
+
+next moisture = previous moisture + precipitation * 0.8 - evapotranspiration * 0.5
+
+Meaning:
+
+- Rainfall increases soil moisture.
+- Evapotranspiration reduces soil moisture.
+- If there is no rainfall, soil moisture should not suddenly increase without reason.
+
+The final prediction combines the raw LSTM output with physics-based water-balance logic. This makes the result more practical, explainable, and suitable for real agricultural decision support.
+
+
+9. CROP PROFILE LOGIC
+---------------------
+
+Different crops have different water requirements. The project includes crop profiles so recommendations can change according to the selected crop.
+
+Available crop profiles:
+
+- General field
+- Wheat
+- Rice
+- Maize
+- Tomato
+- Mustard
+- Sugarcane
+
+Example crop rules:
+
+Wheat:
+- Irrigation threshold: 38%
+- Target moisture: 70%
+- Crop water factor: 0.95x
+
+Rice:
+- Irrigation threshold: 65%
+- Target moisture: 88%
+- Crop water factor: 1.25x
+
+The crop profile can be selected from the Streamlit dashboard sidebar.
+
+
+10. PROJECT SCOPE
+-----------------
+
+Current scope:
+
+- Read live soil and weather-related telemetry from Firebase.
+- Use a dataset fallback for demonstration when live cloud data is unavailable.
+- Fetch current weather and 5-day forecast from OpenWeather.
+- Predict upcoming soil moisture using a trained LSTM model.
+- Apply physics-guided correction using rainfall and evapotranspiration.
+- Generate crop-specific irrigation recommendations.
+- Display a 5-day irrigation plan in a Streamlit dashboard.
+- Publish recommendation output to Firebase for mobile-app integration.
+
+Out of current scope:
+
+- Fully automatic pump control.
+- Large-scale multi-farm deployment.
+- Satellite image processing such as NDVI.
+- Hardware manufacturing or commercial deployment.
+
+Future scope:
+
+- Add relay-based automatic pump control.
+- Add Android app screens that read prediction_output from Firebase.
+- Deploy the TFLite model on edge devices.
+- Add farm location selection.
+- Include satellite-based crop health monitoring.
+- Store historical predictions for long-term analytics.
+
+
+11. HOW TO RUN THE PROJECT
+--------------------------
+
+Step 1: Open the project folder.
+
+Command:
+
+cd "D:\Projects\Final Year Project"
+
+Step 2: Go to the backend folder.
+
+Command:
+
+cd SmartFarmBackend
+
+Step 3: Activate the virtual environment.
+
+Command:
+
+.\venv\Scripts\Activate.ps1
+
+If the virtual environment does not exist, create it first:
+
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+
+Step 4: Install dependencies.
+
+Command:
+
+pip install -r requirements.txt
+
+Step 5: Set environment variables.
+
+Command:
+
+$env:OPENWEATHER_API_KEY="your_openweather_api_key"
+$env:FIREBASE_CREDENTIALS_PATH="predictive-sis-firebase-adminsdk-fbsvc-ad13aadf29.json"
+$env:FIREBASE_DATABASE_URL="https://your-project-default-rtdb.asia-southeast1.firebasedatabase.app/"
+
+Important notes:
+
+- Do not commit real API keys or Firebase credentials to a public repository.
+- .env.example is only a reference file.
+
+Step 6: Run the Streamlit dashboard.
+
+Command:
+
+streamlit run app.py --server.port 8501
+
+Open this URL in the browser:
+
+http://localhost:8501
+
+
+12. ALTERNATIVE RUN COMMAND
+---------------------------
+
+If the Streamlit command is not recognized, run it through the virtual environment Python:
+
+.\venv\Scripts\python.exe -m streamlit run app.py --server.port 8501
+
+
+13. CONSOLE REPORT COMMAND
+--------------------------
+
+The project can also generate a terminal report.
+
+Command:
+
+python decision_engine.py
+
+This command:
+
+- Loads the trained model.
+- Reads Firebase sensor data.
+- Fetches weather forecast data.
+- Generates a 5-day prediction.
+- Prints the report in the terminal.
+- Attempts to save the output to Firebase.
+
+
+14. DASHBOARD OUTPUT
+--------------------
+
+The dashboard contains these sections:
+
+1. Main Recommendation
+   - Shows whether irrigation is required today.
+
+2. Current Field Condition
+   - Soil moisture
+   - Current temperature
+   - Humidity
+   - Irrigation days count
+
+3. 5-Day Irrigation Plan
+   - Expected moisture for each day
+   - Rain forecast
+   - Crop evapotranspiration
+   - Final decision
+
+4. Soil Moisture Trend
+   - Line chart showing upcoming soil moisture.
+
+5. Model Diagnostics
+   - Raw LSTM RMSE
+   - Physics-corrected RMSE
+   - R2 score
+   - Physical violation rate
+   - Raw prediction versus corrected prediction table
+
+6. Publish Recommendation
+   - Generates a markdown recommendation report.
+   - Saves the report to Firebase when the publish button is clicked.
+
+
+15. EXPECTED RESULTS
+--------------------
+
+Expected project demonstration output:
+
+- Irrigation needed today, no irrigation needed, or drainage alert.
+- 5-day irrigation schedule.
+- Soil moisture trend chart.
+- Weather-based decision explanation.
+- Crop-specific threshold-based recommendation.
+- Firebase prediction output for mobile integration.
+- Model diagnostics with performance values.
+
+Current local validation snapshot:
+
+- Raw LSTM RMSE: 8.68
+- Physics-corrected RMSE: 4.55
+- Raw MAE: 7.32
+- Physics-corrected MAE: 3.79
+- R2 Score: 0.952
+- Physical Violation Rate: 0.0%
+
+
+16. HOW TO EXPLAIN THE PROJECT DURING EVALUATION
+------------------------------------------------
+
+Short explanation:
+
+"This project is built for smart irrigation decision support. It combines soil moisture sensing, temperature and humidity sensing, Firebase cloud storage, weather forecast data, and an LSTM machine learning model to recommend when irrigation should be performed. The project also uses a physics-guided soil-water balance correction layer, which makes the prediction more realistic and explainable. The dashboard shows a 5-day irrigation plan, crop-specific recommendations, model diagnostics, and Firebase publishing support."
+
+Detailed explanation:
+
+"On the hardware side, soil moisture and temperature-humidity sensors collect field data. A microcontroller such as ESP32 sends the readings to Firebase Realtime Database. On the software side, the Python backend reads the live sensor values and fetches 5-day weather forecast data from OpenWeather. The trained LSTM model predicts upcoming soil moisture. The raw prediction is then corrected using rainfall and evapotranspiration-based physics logic. Finally, the selected crop profile threshold is applied to generate the decision: irrigation required, no action, or drainage alert."
+
+
+17. DEMONSTRATION SCRIPT
+------------------------
+
+Recommended demonstration flow:
+
+1. Open the project folder.
+2. Open a terminal inside the SmartFarmBackend folder.
+3. Activate the virtual environment.
+4. Run the Streamlit dashboard.
+5. Open the dashboard in the browser.
+6. Select a crop profile from the sidebar, such as Wheat or Rice.
+7. Show current soil moisture and weather metrics.
+8. Explain the main recommendation.
+9. Explain the 5-day irrigation plan.
+10. Explain the soil moisture trend chart.
+11. Open Model Diagnostics and explain RMSE, R2 score, and physics correction.
+12. Open Publish Recommendation and show the generated report.
+13. Explain Firebase and mobile-app integration.
+
+
+18. TROUBLESHOOTING
+-------------------
+
+Problem: Streamlit command not found
+
+Solution:
+
+.\venv\Scripts\python.exe -m streamlit run app.py --server.port 8501
+
+Problem: Firebase error
+
+Solution:
+
+- Check the Firebase credential JSON path.
+- Check whether FIREBASE_DATABASE_URL is correct.
+- Check Firebase Realtime Database rules and service-account permissions.
+- The system can still use dataset fallback for demonstration.
+
+Problem: Weather API error
+
+Solution:
+
+- Check whether OPENWEATHER_API_KEY is set.
+- Check the internet connection.
+- Check whether the API key is active.
+- If weather data is unavailable, the backend can use historical dataset fallback.
+
+Problem: TensorFlow, Pandas, or NumPy error
+
+Solution:
+
+- Use the project virtual environment.
+- Avoid running the project with a mismatched global Python or Anaconda environment.
+- Reinstall dependencies:
+
+pip install -r requirements.txt
+
+
+19. IMPORTANT NOTES
+-------------------
+
+- Do not upload real Firebase service-account JSON files to a public repository.
+- Store API keys in environment variables.
+- The dashboard can run with fallback data for demonstration, but live Firebase and weather features require internet access.
+- The current system is a recommendation support system, not a complete automatic irrigation controller.
+- The TensorFlow Lite model is included for future mobile or edge deployment.
+
+
+20. FINAL CONCLUSION
+--------------------
+
+Smart Farm Irrigation Advisor is a practical AI, IoT, and weather-based precision agriculture system that provides crop-specific, explainable, and data-driven irrigation recommendations.
