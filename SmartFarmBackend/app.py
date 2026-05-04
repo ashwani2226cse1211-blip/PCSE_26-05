@@ -1,4 +1,6 @@
 from html import escape
+import json
+import os
 
 import firebase_admin
 import pandas as pd
@@ -219,7 +221,11 @@ def get_forecast_snapshot():
 
 def initialize_firebase():
     if not firebase_admin._apps:
-        cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
+        service_account_json = os.environ.get("FIREBASE_SERVICE_ACCOUNT_JSON")
+        if service_account_json:
+            cred = credentials.Certificate(json.loads(service_account_json))
+        else:
+            cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
         firebase_admin.initialize_app(cred, {"databaseURL": FIREBASE_DATABASE_URL})
 
 
