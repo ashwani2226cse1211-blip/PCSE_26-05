@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from math import sqrt
 import os
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -14,9 +15,10 @@ from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import load_model
 
 
+BASE_DIR = Path(__file__).resolve().parent
 FIREBASE_CREDENTIALS_PATH = os.environ.get(
     "FIREBASE_CREDENTIALS_PATH",
-    "predictive-sis-firebase-adminsdk-fbsvc-ad13aadf29.json",
+    str(BASE_DIR / "predictive-sis-firebase-adminsdk-fbsvc-ad13aadf29.json"),
 )
 FIREBASE_DATABASE_URL = os.environ.get(
     "FIREBASE_DATABASE_URL",
@@ -25,8 +27,8 @@ FIREBASE_DATABASE_URL = os.environ.get(
 WEATHER_API_KEY = os.environ.get("OPENWEATHER_API_KEY", "")
 FARM_LATITUDE = "28.6692"
 FARM_LONGITUDE = "77.4538"
-AI_MODEL_PATH = "final_smart_model.h5"
-DATASET_PATH = "ultra_realistic_dataset_10_years.csv"
+AI_MODEL_PATH = BASE_DIR / "final_smart_model.h5"
+DATASET_PATH = BASE_DIR / "ultra_realistic_dataset_10_years.csv"
 
 FEATURE_COLUMNS = [
     "tempmax",
