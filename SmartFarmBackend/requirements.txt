@@ -1,6 +1,6 @@
-streamlit
-tensorflow
-pandas
-requests
-firebase-admin
-scikit-learn
+streamlit==1.49.1
+tensorflow==2.20.0
+pandas==2.3.2
+requests==2.33.1
+firebase-admin==7.4.0
+scikit-learn==1.7.1
